@@ -44,6 +44,6 @@ jobs:
       uses: aws-actions/aws-cloudformation-github-deploy@v1
       with:
         name: sagemaker-train-ecr
-        template: deploy/config/ecr.yaml
+        template: deploy/config/ecr.yml
         parameter-overrides: >-
           IAMUserName=${{ secrets.AWS_SERVICE_USER_NAME }}
