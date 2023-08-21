@@ -5,7 +5,7 @@ on:
   push:
     branches: [ "main" ]
     paths:
-    - .github/workflows/docker_stack.yml
+    - .github/workflows/deploy_stack.yml
     - src/lambda/**
     - deploy/config/**
 
@@ -38,18 +38,23 @@ jobs:
         ls
 
     - name: Get Lambda Code
-      id: get-lambda-code
+      id: get_lambda_code
       run:
-        CONTENT=$(<src/lambda/trigger.py)
-        echo "LAMBDA_CODE=$CONTENT" >> $GITHUB_ENV
+
+        echo "LAMBDA_CODE='$(<src/lambda/trigger.py)'" >> $GITHUB_OUTPUT
+
+    - name: Print Lambda Code
+      id: print_lambda_code
+      run:
+        echo "${{ steps.get_lambda_code.outputs.LAMBDA_CODE }}""
 
     - name: Deploy Amazon Stack
       id: stack-deploy
       uses: aws-actions/aws-cloudformation-github-deploy@v1
       with:
-        name: sagemaker-train-stack
+        name: sagemaker-train-ecr
         template: deploy/config/stack.yml
         parameter-overrides: >-
           IAMUserName=${{ secrets.AWS_SERVICE_USER_NAME }},
-          TriggerLambdaCode=$LAMBDA_CODE
+          TriggerLambdaCode="${{ steps.get_lambda_code.outputs.LAMBDA_CODE }}""
         no-fail-on-empty-changeset: '1'
