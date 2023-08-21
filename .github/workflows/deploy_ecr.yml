@@ -7,9 +7,6 @@ on:
         description: 'AWS Region'
         required: true
         default: 'eu-west-1'
-      keypair:
-        description: 'SSH Key Pair'
-        required: true
 
 jobs:
   ecr:
@@ -27,7 +24,7 @@ jobs:
       with:
         aws-access-key-id: ${{ secrets.AWS_SERVICE_KEY }}
         aws-secret-access-key: ${{ secrets.AWS_SERVICE_SECRET_KEY }}
-        aws-region: eu-west-1
+        aws-region: ${{ github.event.inputs.region }}
 
     - name: Configure environment name
       id: env-name
