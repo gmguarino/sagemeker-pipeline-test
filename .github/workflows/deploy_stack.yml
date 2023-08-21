@@ -1,4 +1,4 @@
-name: Deploy ECR
+name: Deploy Stack
 
 on:
   workflow_dispatch:
@@ -10,7 +10,7 @@ on:
     - deploy/config/**
 
 jobs:
-  ecr:
+  deploy:
     name: Deploy ECR to AWS
     runs-on: ubuntu-latest
     outputs:
@@ -37,12 +37,19 @@ jobs:
         echo "environment=$ENVIRONMENT" >> $GITHUB_OUTPUT
         ls
 
-    - name: Deploy Amazon ECR
-      id: ecr-repo
+    - name: Get Lambda Code
+      id: get-lambda-code
+      run:
+        CONTENT=$(<src/lambda/trigger.py)
+        echo "LAMBDA_CODE=$CONTENT" >> $GITHUB_ENV
+
+    - name: Deploy Amazon Stack
+      id: stack-deploy
       uses: aws-actions/aws-cloudformation-github-deploy@v1
       with:
         name: sagemaker-train-stack
         template: deploy/config/stack.yml
         parameter-overrides: >-
-          IAMUserName=${{ secrets.AWS_SERVICE_USER_NAME }}
+          IAMUserName=${{ secrets.AWS_SERVICE_USER_NAME }},
+          TriggerLambdaCode=$LAMBDA_CODE
         no-fail-on-empty-changeset: '1'

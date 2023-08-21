@@ -1,7 +1,7 @@
 AWSTemplateFormatVersion: "2010-09-09"
 
 Description: >
-  This template creates ECR resources
+  This template creates the stack for the deployment pipelines
 
 Parameters:
   IAMUserName:
@@ -9,6 +9,10 @@ Parameters:
     Description: IAM User Name
     Default: "service-test-pipeline"
     ConstraintDescription: must be a valid IAM user name  
+  TriggerLambdaCode:
+    Type: String
+    Description: Python code for the lambda funtion
+    ConstraintDescription: Lambda function code limited to 4096 bytes
 
 Resources:
   ECRRepository:
@@ -33,6 +37,14 @@ Resources:
               - "ecr:InitiateLayerUpload"
               - "ecr:UploadLayerPart"
               - "ecr:CompleteLayerUpload"
+  triggerSMPipelineMlOps:
+    Type: AWS::Lambda::Function
+    Properties:
+      Role: arn:aws:iam::436376758376:role/Lambda_SagemakerFullAccess
+      Runtime: python3.10
+      Handler: trigger.lambda_handler
+      code:
+        ZipFile: !Ref TriggerLambdaCode
 
 Outputs:
   ECRRepository:
