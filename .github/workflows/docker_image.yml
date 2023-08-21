@@ -25,7 +25,7 @@ jobs:
       - name: ECR Login
         id: ecr-login
         run: |
-          aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin 436376758376.dkr.ecr.eu-west-1.amazonaws.com
+          aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin 141502667606.dkr.ecr.eu-west-1.amazonaws.com
 
       - name: Build the Docker image
         id: build
@@ -35,4 +35,6 @@ jobs:
 
       - name: Push the Docker image
         id: push-image
-        run: docker push 436376758376.dkr.ecr.eu-west-1.amazonaws.com/sagemaker/example-train-pipeline:$TAG
+        run: |
+          aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin 436376758376.dkr.ecr.eu-west-1.amazonaws.com
+          docker push 436376758376.dkr.ecr.eu-west-1.amazonaws.com/sagemaker/example-train-pipeline:$TAG
