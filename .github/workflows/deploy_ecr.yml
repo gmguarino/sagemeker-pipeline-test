@@ -7,9 +7,6 @@ on:
         description: 'AWS Region'
         required: false
         default: 'eu-west-1'
-  push:
-    branches:
-      - main
 
 jobs:
   ecr:
