@@ -2,6 +2,8 @@ import pandas as pd
 import numpy as np
 import argparse
 
+from sklearn.datasets import make_classification
+
 from sklearn.linear_model import LogisticRegression
 
 import joblib
@@ -35,8 +37,16 @@ def main():
     args = parser.parse_args()
     
     print(os.environ)
+    X, y = make_classification(n_samples=1000, n_features=20, n_informative=2, n_redundant=2, n_repeated=0, n_classes=2)
+    data = np.concatenate([X, y[:, np.newaxis]], axis=1)
+    data = pd.DataFrame(data, columns=["X_" + str(i) for i in range(20)] + ["y"])
+
+    train = data.sample(frac=0.8).copy()
+    test = data.drop(train.index).copy()
     
-    X, y = get_data_train()
+    # X, y = get_data_train()
+    X = train.drop("y", axis=1).values
+    y = train.y.values
     
     model = get_model()
     model.fit(X, y)
