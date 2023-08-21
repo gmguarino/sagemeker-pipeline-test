@@ -2,11 +2,12 @@ name: Deploy ECR
 
 on:
   workflow_dispatch:
-    inputs:
-      region:
-        description: 'AWS Region'
-        required: false
-        default: 'eu-west-1'
+  push:
+    branches: [ "main" ]
+    paths:
+    - .github/workflows/docker_stack.yml
+    - src/lambda/**
+    - deploy/config/**
 
 jobs:
   ecr:
@@ -45,4 +46,3 @@ jobs:
         parameter-overrides: >-
           IAMUserName=${{ secrets.AWS_SERVICE_USER_NAME }}
         no-fail-on-empty-changeset: '1'
-
