@@ -4,9 +4,9 @@ Description: >
   This template creates ECR resources
 
 Parameters:
-  UserARN:
+  IAMUserName:
     Type: String
-    Description: IAM User ARN
+    Description: IAM User Name
     Default: "service-test-pipeline"
     ConstraintDescription: must be a valid IAM user name  
 
