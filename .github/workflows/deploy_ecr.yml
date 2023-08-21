@@ -5,7 +5,7 @@ on:
     inputs:
       region:
         description: 'AWS Region'
-        required: true
+        required: false
         default: 'eu-west-1'
   push:
     branches:
