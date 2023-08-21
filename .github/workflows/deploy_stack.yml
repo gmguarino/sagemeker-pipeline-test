@@ -11,7 +11,7 @@ on:
 
 jobs:
   deploy:
-    name: Deploy ECR to AWS
+    name: Deploy Stack to AWS
     runs-on: ubuntu-latest
     outputs:
       env-name: ${{ steps.env-name.outputs.environment }}
