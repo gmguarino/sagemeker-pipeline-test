@@ -9,7 +9,7 @@ env:
   TAG: latest
 
 jobs:
-  pre-build:
+  build:
       runs-on: ubuntu-latest
       steps:
       - name: Checkout
@@ -31,16 +31,11 @@ jobs:
         run: |
           cd train
  
-  build:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag 436376758376.dkr.ecr.eu-west-1.amazonaws.com/sagemaker/example-train-pipeline:$TAG
+      - name: Build the Docker image
+        id: build
+        run: docker build . --file Dockerfile --tag 436376758376.dkr.ecr.eu-west-1.amazonaws.com/sagemaker/example-train-pipeline:$TAG
   
-  post-build:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
-    - name: Push the Docker image
-      run: docker push 436376758376.dkr.ecr.eu-west-1.amazonaws.com/sagemaker/example-train-pipeline:$TAG
+
+      - name: Push the Docker image
+        id: push-image
+        run: docker push 436376758376.dkr.ecr.eu-west-1.amazonaws.com/sagemaker/example-train-pipeline:$TAG
