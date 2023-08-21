@@ -1,0 +1,40 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description: >
+  This template creates ECR resources
+
+Parameters:
+  UserARN:
+    Type: String
+    Description: IAM User ARN
+    Default: "service-test-pipeline"
+    ConstraintDescription: must be a valid IAM user name  
+
+Resources:
+  ECRRepository:
+    Type: AWS::ECR::Repository
+    Properties:
+      RepositoryName: sagemaker/example-train-pipeline
+      RepositoryPolicyText:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: "AllowPushPull"
+            Effect: Allow
+            Principal:
+              AWS:
+                - !Join ["", ["arn:aws:iam::", !Ref AWS::AccountId, ":user/", !Ref IAMUserName],]
+                - arn:aws:iam::436376758376:role/service-role/SageMaker-MLOpsEngineer1
+                - arn:aws:iam::436376758376:role/Lambda_SagemakerFullAccess
+            Action:
+              - "ecr:GetDownloadUrlForLayer"
+              - "ecr:BatchGetImage"
+              - "ecr:BatchCheckLayerAvailability"
+              - "ecr:PutImage"
+              - "ecr:InitiateLayerUpload"
+              - "ecr:UploadLayerPart"
+              - "ecr:CompleteLayerUpload"
+
+Outputs:
+  ECRRepository:
+    Description: ECR repository
+    Value: !Ref ECRRepository
