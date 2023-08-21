@@ -7,6 +7,9 @@ on:
         description: 'AWS Region'
         required: true
         default: 'eu-west-1'
+  push:
+    branches:
+      - main
 
 jobs:
   ecr:
@@ -34,6 +37,7 @@ jobs:
         ENVIRONMENT=`echo $REPO | tr "/" "-"`
         echo "Environment name: $ENVIRONMENT"
         echo "environment=$ENVIRONMENT" >> $GITHUB_OUTPUT
+        ls
 
     - name: Deploy Amazon ECR
       id: ecr-repo
