@@ -30,6 +30,7 @@ jobs:
         id: move-dir
         run: |
           cd train
+          ls
  
       - name: Build the Docker image
         id: build
