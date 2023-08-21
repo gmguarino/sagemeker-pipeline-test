@@ -47,3 +47,5 @@ jobs:
         template: deploy/config/ecr.yml
         parameter-overrides: >-
           IAMUserName=${{ secrets.AWS_SERVICE_USER_NAME }}
+        no-fail-on-empty-changeset: '1'
+
