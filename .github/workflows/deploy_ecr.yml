@@ -1,0 +1,48 @@
+name: Deploy ECR
+
+on:
+  workflow_dispatch:
+    inputs:
+      region:
+        description: 'AWS Region'
+        required: true
+        default: 'eu-west-1'
+      keypair:
+        description: 'SSH Key Pair'
+        required: true
+
+jobs:
+  ecr:
+    name: Deploy ECR to AWS
+    runs-on: ubuntu-latest
+    outputs:
+      env-name: ${{ steps.env-name.outputs.environment }}
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Configure AWS credentials
+      id: creds
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_SERVICE_KEY }}
+        aws-secret-access-key: ${{ secrets.AWS_SERVICE_SECRET_KEY }}
+        aws-region: eu-west-1
+
+    - name: Configure environment name
+      id: env-name
+      env:
+        REPO: ${{ github.repository }}
+      run: |
+        ENVIRONMENT=`echo $REPO | tr "/" "-"`
+        echo "Environment name: $ENVIRONMENT"
+        echo "environment=$ENVIRONMENT" >> $GITHUB_OUTPUT
+
+    - name: Deploy Amazon ECR
+      id: ecr-repo
+      uses: aws-actions/aws-cloudformation-github-deploy@v1
+      with:
+        name: sagemaker-train-ecr
+        template: deploy/config/ecr.yaml
+        parameter-overrides: >-
+          IAMUserName=${{ secrets.AWS_SERVICE_USER_NAME }}
