@@ -9,10 +9,6 @@ Parameters:
     Description: IAM User Name
     Default: "service-test-pipeline"
     ConstraintDescription: must be a valid IAM user name  
-  TriggerLambdaCode:
-    Type: String
-    Description: Python code for the lambda funtion
-    ConstraintDescription: Lambda function code limited to 4096 bytes
 
 Resources:
   ECRRepository:
@@ -40,6 +36,7 @@ Resources:
   triggerSMPipelineMlOps:
     Type: AWS::Lambda::Function
     Properties:
+      FunctionName: trigger-mlops-pipeline-training
       Role: arn:aws:iam::436376758376:role/Lambda_SagemakerFullAccess
       Runtime: python3.10
       Handler: trigger.lambda_handler
@@ -50,10 +47,13 @@ Resources:
 
             '
           -
-            - !Ref TriggerLambdaCode
+            - "%%{src/lambda/trigger.py}%%"
         
 
 Outputs:
   ECRRepository:
     Description: ECR repository
     Value: !Ref ECRRepository
+  triggerSMPipelineMlOps:
+    Description: Trigger lambda Function
+    Value: !Ref triggerSMPipelineMlOps

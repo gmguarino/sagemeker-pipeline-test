@@ -39,22 +39,15 @@ jobs:
 
     - name: Get Lambda Code
       id: get_lambda_code
-      run:
-
-        echo "LAMBDA_CODE='$(<src/lambda/trigger.py)'" >> $GITHUB_OUTPUT
-
-    - name: Print Lambda Code
-      id: print_lambda_code
-      run:
-        echo "${{ steps.get_lambda_code.outputs.LAMBDA_CODE }}""
+      run: |
+        python ./deploy/utils/import_file.py --yaml deploy/config/stack.yml deploy/config/stack_out.yml
 
     - name: Deploy Amazon Stack
       id: stack-deploy
       uses: aws-actions/aws-cloudformation-github-deploy@v1
       with:
         name: sagemaker-train-ecr
-        template: deploy/config/stack.yml
+        template: deploy/config/stack_out.yml
         parameter-overrides: >-
-          IAMUserName=${{ secrets.AWS_SERVICE_USER_NAME }},
-          TriggerLambdaCode="${{ steps.get_lambda_code.outputs.LAMBDA_CODE }}""
+          IAMUserName=${{ secrets.AWS_SERVICE_USER_NAME }}
         no-fail-on-empty-changeset: '1'
