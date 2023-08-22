@@ -33,6 +33,32 @@ Resources:
               - "ecr:InitiateLayerUpload"
               - "ecr:UploadLayerPart"
               - "ecr:CompleteLayerUpload"
+
+  ScheduleLambdaTrigger: 
+    Type: AWS::Events::Rule
+    Properties: 
+      Description: "Schedule for mlops pipeline trigger"
+      ScheduleExpression: "cron(0 12 ? * * *)"
+      State: "ENABLED"
+      Targets: 
+        - 
+          Arn: 
+            Fn::GetAtt: 
+              - "triggerSMPipelineMlOps"
+              - "Arn"
+          Id: "mlops-training-pipeline-trigger-lambda"
+
+  ScheduleLambdaTriggerPermission: 
+    Type: AWS::Lambda::Permission
+    Properties: 
+      FunctionName: !Ref triggerSMPipelineMlOps
+      Action: "lambda:InvokeFunction"
+      Principal: "events.amazonaws.com"
+      SourceArn: 
+        Fn::GetAtt: 
+          - "ScheduleLambdaTrigger"
+          - "Arn"
+
   triggerSMPipelineMlOps:
     Type: AWS::Lambda::Function
     Properties:
@@ -48,12 +74,14 @@ Resources:
             '
           -
             - "%%{src/lambda/trigger.py}%%"
-        
 
 Outputs:
   ECRRepository:
     Description: ECR repository
     Value: !Ref ECRRepository
   triggerSMPipelineMlOps:
-    Description: Trigger lambda Function
+    Description: Trigger lambda function
     Value: !Ref triggerSMPipelineMlOps
+  ScheduleLambdaTrigger:
+    Description: Trigger lambda function CRON schedule
+    Value: !Ref ScheduleLambdaTrigger

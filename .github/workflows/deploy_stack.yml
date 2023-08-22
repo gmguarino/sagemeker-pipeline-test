@@ -41,6 +41,7 @@ jobs:
       id: get_lambda_code
       run: |
         python ./deploy/utils/import_file.py --yaml deploy/config/stack.yml deploy/config/stack_out.yml
+        cat deploy/config/stack_out.yml
 
     - name: Deploy Amazon Stack
       id: stack-deploy
