@@ -39,7 +39,7 @@ Resources:
       FunctionName: trigger-mlops-pipeline-training
       Role: arn:aws:iam::436376758376:role/Lambda_SagemakerFullAccess
       Runtime: python3.10
-      Handler: trigger.lambda_handler
+      Handler: index.lambda_handler
       Code:
         ZipFile:
           Fn::Join:
