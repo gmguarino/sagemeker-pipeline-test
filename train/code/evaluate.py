@@ -1,6 +1,7 @@
 import pandas as pd
 import joblib
 import pathlib
+import tarfile
 import json
 
 from sklearn.metrics import f1_score
@@ -12,7 +13,11 @@ if __name__ == "__main__":
     X = data.drop("y", axis=1).values
     y = data.y.values
 
-    model = joblib.load("/opt/ml/model/model.joblib")
+    model_path = f"/opt/ml/processing/model/model.tar.gz"
+    with tarfile.open(model_path) as tar:
+        tar.extractall(path="/opt/ml/processing/model/.")
+
+    model = joblib.load("/opt/ml/processing/model/model.joblib")
     preds = model.predict(X)
     score = f1_score(y, preds)
     result_dict = {"f1_score": score}
