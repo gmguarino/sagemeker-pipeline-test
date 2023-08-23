@@ -69,7 +69,7 @@ jobs:
       id: parse_env
       uses: xom9ikk/dotenv@v2
       with:
-        path: deploy/pipeline/pipeline.env
+        path: deploy/pipeline
         load-mode: strict
 
 
@@ -83,17 +83,17 @@ jobs:
       id: upsert_pipeline
       run: |
         python deploy/pipeline/get_pipeline.py \
-          --model-id $MODEL_ID \
-          --preprocess-job-name $PREPROCESS_JOB_NAME \
-          --preprocess-step-name $PREPROCESS_STEP_NAME \
-          --preprocess-entry-point $PREPROCESS_ENTRY_POINT \
-          --train-step-name $TRAIN_STEP_NAME \
-          --train-entry-point $TRAIN_ENTRY_POINT \
-          --train-source-dir $TRAIN_SOURCE_DIR \
-          --evaluate-job-name $EVALUATE_JOB_NAME \
-          --evaluate-entry-point $EVALUATE_ENTRY_POINT \
-          --evaluate-step-name $EVALUATE_STEP_NAME \
-          --prefix $S3_PREFIX \
-          --base-job-prefix $BASE_JOB_PREFIX \
-          --model-package-group-name $MODEL_PACKAGE_GROUP_NAME \
-          --pipeline-name $PIPELINE_NAME
+          --model-id "$MODEL_ID" \
+          --preprocess-job-name "$PREPROCESS_JOB_NAME" \
+          --preprocess-step-name "$PREPROCESS_STEP_NAME" \
+          --preprocess-entry-point "$PREPROCESS_ENTRY_POINT" \
+          --train-step-name "$TRAIN_STEP_NAME" \
+          --train-entry-point "$TRAIN_ENTRY_POINT" \
+          --train-source-dir "$TRAIN_SOURCE_DIR" \
+          --evaluate-job-name "$EVALUATE_JOB_NAME" \
+          --evaluate-entry-point "$EVALUATE_ENTRY_POINT" \
+          --evaluate-step-name "$EVALUATE_STEP_NAME" \
+          --prefix "$S3_PREFIX" \
+          --base-job-prefix "$BASE_JOB_PREFIX" \
+          --model-package-group-name "$MODEL_PACKAGE_GROUP_NAME" \
+          --pipeline-name "$PIPELINE_NAME"

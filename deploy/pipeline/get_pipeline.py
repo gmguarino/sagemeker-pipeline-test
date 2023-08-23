@@ -60,22 +60,6 @@ if __name__ == "__main__":
     
     
     args = parser.parse_args()
-        
-    prefix = "projects/mlops"
-
-    # preprocess inputs
-    args.preprocess_job_name = "mlops-test-nb-pipeline-preprocess"
-    args.preprocess_step_name = "MLOpsTestProcessing"
-    args.preprocess_entry_point = os.path.join("../../train/code/preprocess.py")
-
-    # train inputs
-    args.train_step_name = "mlops-pipeline-test-model"
-    args.train_entry_point = "train.py"
-    args.train_source_dir = "../../train/code/"
-
-    args.evaluate_job_name = "mlops-test-nb-pipeline-evaluate"
-    args.evaluate_entry_point = "../../train/code/evaluate.py"
-    args.evaluate_step_name = "EvaluatePerformance"
 
     # logs = {}
     # model_id_prefix = "sklearn-dummy"
@@ -83,11 +67,6 @@ if __name__ == "__main__":
     # args.model_id = f'{model_id_prefix}-{date_str}-' + secrets.token_hex(nbytes=16)
     # print(args.model_id)
     now = datetime.now()
-
-    args.base_job_prefix= "mlops-test"
-    args.model_package_group_name = "MLOpsTestModel"
-    args.pipeline_name = "TrainingPipelineMLOpsTest"  
-
 
     # parameters for pipeline execution
     processing_instance_count = 1
@@ -115,10 +94,10 @@ if __name__ == "__main__":
         processor=sklearn_processor,
         outputs=[
             ProcessingOutput(output_name="train_data", source="/opt/ml/processing/train",
-                            destination=os.path.join(f"s3://{bucket}", prefix, "challenger", 
+                            destination=os.path.join(f"s3://{bucket}", args.prefix, "challenger", 
                                                     now.strftime("%Y/%m/%d"), args.model_id, "data", "train")),
             ProcessingOutput(output_name="test_data", source="/opt/ml/processing/test",
-                            destination=os.path.join(f"s3://{bucket}", prefix, "challenger", 
+                            destination=os.path.join(f"s3://{bucket}", args.prefix, "challenger", 
                                                     now.strftime("%Y/%m/%d"), args.model_id, "data", "test")),
         ],
         code=args.preprocess_entry_point
@@ -132,8 +111,8 @@ if __name__ == "__main__":
         instance_count=1,
         role=role,
         sagemaker_session=sagemaker_session,
-        output_path=f"s3://{bucket}/{prefix}/training/output",
-        code_location=f"s3://{bucket}/{prefix}/training/code"
+        output_path=f"s3://{bucket}/{args.prefix}/training/output",
+        code_location=f"s3://{bucket}/{args.prefix}/training/code"
     )
 
     step_train = TrainingStep(
@@ -172,7 +151,7 @@ if __name__ == "__main__":
             ),
         ],
         outputs=[
-            ProcessingOutput(output_name="evaluation", source="/opt/ml/processing/evaluation", destination=os.path.join(f"s3://{bucket}", prefix, "challenger", 
+            ProcessingOutput(output_name="evaluation", source="/opt/ml/processing/evaluation", destination=os.path.join(f"s3://{bucket}", args.prefix, "challenger", 
                                                     now.strftime("%Y/%m/%d"), args.model_id, "data", "evaluation_report")),
         ],
         property_files=[evaluation_report],
