@@ -151,7 +151,7 @@ if __name__ == "__main__":
         ],
         outputs=[
             ProcessingOutput(output_name="evaluation", source="/opt/ml/processing/evaluation", destination=os.path.join(f"s3://{bucket}", args.prefix, "challenger", 
-                                                    now.strftime("%Y/%m/%d"), args.model_id, "data", "evaluation_report")),
+                                                    now.strftime("%Y/%m/%d"), args.model_id, "data", "evaluation_report.json")),
         ],
         property_files=[evaluation_report],
         code=args.evaluate_entry_point
