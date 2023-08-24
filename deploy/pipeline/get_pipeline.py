@@ -133,7 +133,7 @@ if __name__ == "__main__":
         instance_type=evaluation_instance_type,
         instance_count=evaluation_instance_count,
         volume_size_in_gb=5,
-        base_job_name=args.args.evaluate_job_name,
+        base_job_name=args.evaluate_job_name,
         role=args.role
     )
     step_evaluate = ProcessingStep(
