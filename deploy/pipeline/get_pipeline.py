@@ -19,14 +19,12 @@ from sagemaker.workflow.properties import PropertyFile
 
 def get_sagemaker_session():
     """
-    Gets sagemaker session, bucket and role.
+    Gets sagemaker session, bucket.
     """
     sagemaker_session = sagemaker.Session()
-    role = sagemaker.get_execution_role()
     bucket = sagemaker_session.default_bucket()
 
-    print(f"Role : {role}")
-    return sagemaker_session, role, bucket
+    return sagemaker_session, bucket
 
 
 if __name__ == "__main__":
@@ -56,6 +54,7 @@ if __name__ == "__main__":
     parser.add_argument("--base-job-prefix", type=str, default="mlops-test")
     parser.add_argument("--model-package-group-name", type=str, default="MLOpsTestModel")
     parser.add_argument("--pipeline-name", type=str, default="TrainingPipelineMLOpsTest")
+    parser.add_argument("--role", type=str, default="arn:aws:iam::436376758376:role/service-role/SageMaker-MLOpsEngineer1")
 
     
     
@@ -78,7 +77,7 @@ if __name__ == "__main__":
         name="ModelApprovalStatus", default_value="PendingManualApproval"
     )
 
-    sagemaker_session, role, bucket = get_sagemaker_session()
+    sagemaker_session, bucket = get_sagemaker_session()
 
     sklearn_processor = SKLearnProcessor(
         framework_version="1.2-1",
@@ -86,7 +85,7 @@ if __name__ == "__main__":
         instance_count=processing_instance_count,
         volume_size_in_gb=5,
         base_job_name=args.preprocess_job_name,
-        role=role
+        role=args.role
     )
 
     processing_step = ProcessingStep(
@@ -109,7 +108,7 @@ if __name__ == "__main__":
         framework_version="1.2-1",
         instance_type=training_instance_type,
         instance_count=1,
-        role=role,
+        role=args.role,
         sagemaker_session=sagemaker_session,
         output_path=f"s3://{bucket}/{args.prefix}/training/output",
         code_location=f"s3://{bucket}/{args.prefix}/training/code"
@@ -135,7 +134,7 @@ if __name__ == "__main__":
         instance_count=evaluation_instance_count,
         volume_size_in_gb=5,
         base_job_name=args.args.evaluate_job_name,
-        role=role
+        role=args.role
     )
     step_evaluate = ProcessingStep(
         name=args.evaluate_step_name,
@@ -163,4 +162,4 @@ if __name__ == "__main__":
         steps=[processing_step, step_train, step_evaluate]
     )
     json.loads(pipeline.definition())
-    pipeline.upsert(role_arn=role)
+    pipeline.upsert(role_arn=args.role)

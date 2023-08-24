@@ -96,4 +96,5 @@ jobs:
           --prefix "$S3_PREFIX" \
           --base-job-prefix "$BASE_JOB_PREFIX" \
           --model-package-group-name "$MODEL_PACKAGE_GROUP_NAME" \
-          --pipeline-name "$PIPELINE_NAME"
+          --pipeline-name "$PIPELINE_NAME" \
+          --role "$ROLE"
