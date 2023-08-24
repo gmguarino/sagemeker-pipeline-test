@@ -76,7 +76,7 @@ jobs:
     - name: Create Model ID
       id: create_model_id
       run: |
-        MODEL_ID="echo $(echo $RANDOM | md5sum | head -c 20)"
+        MODEL_ID="$(echo $RANDOM | md5sum | head -c 20)"
         echo "MODEL_ID=$MODEL_ID" >> "$GITHUB_ENV"
 
     - name: Upsert Pipeline
