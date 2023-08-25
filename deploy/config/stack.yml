@@ -38,7 +38,7 @@ Resources:
     Type: AWS::Events::Rule
     Properties: 
       Description: "Schedule for mlops pipeline trigger"
-      ScheduleExpression: "cron(0 12 ? * * *)"
+      ScheduleExpression: "cron(0 9 ? * * *)"
       State: "ENABLED"
       Targets: 
         - 
